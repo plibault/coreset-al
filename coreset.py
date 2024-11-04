@@ -24,13 +24,15 @@ from sklearn.metrics import pairwise_distances
 class Coreset_Greedy:
     def __init__(self, all_pts):
         self.all_pts = np.array(all_pts)
+        # self.all_pts = np.concatenate(all_pts)
         self.dset_size = len(all_pts)
         self.min_distances = None
         self.already_selected = []
 
         # reshape
-        feature_len = self.all_pts[0].shape[1]
-        self.all_pts = self.all_pts.reshape(-1,feature_len)
+        # self.feature_len = self.all_pts[0].shape[1]
+        self.feature_len = self.all_pts.shape[1]
+        # self.all_pts = self.all_pts.reshape(-1,self.feature_len)
 
         # self.first_time = True
 
@@ -43,6 +45,7 @@ class Coreset_Greedy:
         if centers is not None:
             x = self.all_pts[centers] # pick only centers
             dist = pairwise_distances(self.all_pts, x, metric='euclidean')
+            # dist = pairwise_distances(self.all_pts, x, metric='l2')
 
             if self.min_distances is None:
                 self.min_distances = np.min(dist, axis=1).reshape(-1,1)
@@ -70,6 +73,6 @@ class Coreset_Greedy:
             new_batch.append(ind)
         
         max_distance = max(self.min_distances)
-        print("Max distance from cluster : %0.2f" % max_distance)
+        print("Max distance from cluster : %0.5f" % max_distance)
 
         return new_batch, max_distance

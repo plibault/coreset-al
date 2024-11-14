@@ -21,6 +21,7 @@ from torch.optim.lr_scheduler import StepLR
 
 from sklearn.metrics import pairwise_distances
 
+
 class Coreset_Greedy:
     def __init__(self, all_pts):
         self.all_pts = np.array(all_pts)
@@ -41,17 +42,17 @@ class Coreset_Greedy:
             self.min_distances = None
         if only_new:
             centers = [p for p in centers if p not in self.already_selected]
-        
+
         if centers is not None:
-            x = self.all_pts[centers] # pick only centers
-            dist = pairwise_distances(self.all_pts, x, metric='euclidean')
+            x = self.all_pts[centers]  # pick only centers
+            dist = pairwise_distances(self.all_pts, x, metric="euclidean")
             # dist = pairwise_distances(self.all_pts, x, metric='l2')
 
             if self.min_distances is None:
-                self.min_distances = np.min(dist, axis=1).reshape(-1,1)
+                self.min_distances = np.min(dist, axis=1).reshape(-1, 1)
             else:
                 self.min_distances = np.minimum(self.min_distances, dist)
-    
+
     def sample(self, already_selected, sample_size):
 
         # initially updating the distances
@@ -67,11 +68,11 @@ class Coreset_Greedy:
                 ind = np.random.choice(np.arange(self.dset_size))
             else:
                 ind = np.argmax(self.min_distances)
-            
+
             assert ind not in already_selected
-            self.update_dist([ind],only_new=True, reset_dist=False)
+            self.update_dist([ind], only_new=True, reset_dist=False)
             new_batch.append(ind)
-        
+
         max_distance = max(self.min_distances)
         print("Max distance from cluster : %0.5f" % max_distance)
 

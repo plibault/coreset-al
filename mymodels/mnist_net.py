@@ -27,7 +27,7 @@ class Net(nn.Module):
         x = torch.flatten(x, 1)
         x = self.fc1(x)
         return x
-    
+
     def stochastic_pred(self, x):
         # add dropouts everywhere
         x = self.conv1(x)

@@ -25,20 +25,36 @@ from train_test import train, test
 
 
 def argparser():
-    parser = argparse.ArgumentParser(description='Active Learning - Image Classification')
-    parser.add_argument('--test-batch-size', type=int, default=1000, metavar='N',
-                        help='input batch size for testing (default: 1000)')
-    parser.add_argument('--no-cuda', action='store_true', default=False,
-                        help='disables CUDA training')
-    parser.add_argument('--seed', type=int, default=1, metavar='S',
-                        help='random seed (default: 1)')
-    parser.add_argument('--dataset-root', default='data/mnist_easy', type=str,
-                        help='root directory of the dataset')
-    parser.add_argument('--dataset-name', default='mnist', type=str,
-                        help='dataset name')
-    parser.add_argument('--model-file', default='', type=str,
-                        help='location of the model file')
+    parser = argparse.ArgumentParser(
+        description="Active Learning - Image Classification"
+    )
+    parser.add_argument(
+        "--test-batch-size",
+        type=int,
+        default=1000,
+        metavar="N",
+        help="input batch size for testing (default: 1000)",
+    )
+    parser.add_argument(
+        "--no-cuda", action="store_true", default=False, help="disables CUDA training"
+    )
+    parser.add_argument(
+        "--seed", type=int, default=1, metavar="S", help="random seed (default: 1)"
+    )
+    parser.add_argument(
+        "--dataset-root",
+        default="data/mnist_easy",
+        type=str,
+        help="root directory of the dataset",
+    )
+    parser.add_argument(
+        "--dataset-name", default="mnist", type=str, help="dataset name"
+    )
+    parser.add_argument(
+        "--model-file", default="", type=str, help="location of the model file"
+    )
     return parser
+
 
 if __name__ == "__main__":
     args = argparser().parse_args()
@@ -46,14 +62,17 @@ if __name__ == "__main__":
     use_cuda = not args.no_cuda and torch.cuda.is_available()
     torch.manual_seed(args.seed)
     device = torch.device("cuda" if use_cuda else "cpu")
-    kwargs = {'num_workers': 1, 'pin_memory': True} if use_cuda else {}
+    kwargs = {"num_workers": 1, "pin_memory": True} if use_cuda else {}
 
-    data_transforms = transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ])
-    dataset_test = MNIST(args.dataset_root, subset='test', csv_file='test.csv', transform=data_transforms)
-    test_loader = DataLoader(dataset_test, batch_size=args.test_batch_size, shuffle=False, **kwargs)
+    data_transforms = transforms.Compose(
+        [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
+    )
+    dataset_test = MNIST(
+        args.dataset_root, subset="test", csv_file="test.csv", transform=data_transforms
+    )
+    test_loader = DataLoader(
+        dataset_test, batch_size=args.test_batch_size, shuffle=False, **kwargs
+    )
 
     model = Net().to(device)
     model.load_state_dict(torch.load(args.model_file))
